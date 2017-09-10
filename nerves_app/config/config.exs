@@ -33,6 +33,7 @@ config :nerves_firmware_ssh,
 import_config "../../phx_app/config/config.exs"
 
 config :phx_app, PhxAppWeb.Endpoint,
+  http: [port: 80],
   code_reloader: false,
   server: true
 
