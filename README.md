@@ -103,7 +103,9 @@ for this. Select "Upload ISO" for the server type and click iPXE.
 Set the "iPXE Chain URL" to the URL for your script.
 
 Start the server. If you click on the show console button, you may see
-the loader run. You should eventually get an `iex>` prompt.
+the loader run. You should eventually get an `iex>` prompt:
+
+![Vultr console](screenshots/vultr-console.png)
 
 ## Updating a running instance
 
