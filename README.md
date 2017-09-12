@@ -1,8 +1,46 @@
 # vultr_example
 
+*After writing this up, I saw a few easy things to fix in the
+[nerves_system_vultr](https://github.com/fhunleth/nerves_system_vultr)
+dependency. This could cause errors. If you're really interested in replicating
+this experiment, ping me on the #nerves slack channel.*
+
 This is a demo of using Nerves to deploy a Phoenix application to the cloud.
-In this case, we're using [Vultr](https://vultr.com) service since it was
-easy for me to understand.
+It should be viewed as an experiment in response to several people asking me
+whether it was possible. I've only taken the initial steps.  This example uses
+the [Vultr](https://vultr.com) VPS provider since it was easiest for me to find
+information on it.
+
+Some highlights:
+
+1. The Nerves tooling handles cross-compiling for the target server. If
+   you're on OSX, you've probably run into this issue during deployment.
+2. Nerves uses Distillery to make an OTP release and then takes the release
+   and bundles a minimal Linux setup with it.
+3. Everything required to run the server is packed into a special zip file
+   (called a firmware bundle in Nerves) which is about 20 MB for the default
+   Phoenix application. This probably can be reduced.
+4. The Phoenix example's root entire filesystem was 23 MB (this is read-only
+   in Nerves so it can be packed tightly), and it used about 165 MB of DRAM as
+   reported by the `free` utility.
+5. Start time was in the low seconds. It might be faster - I need to try
+   harder to capture it rather than eyeballing the Vultr console utility.
+6. Updating a server took a little over 20 seconds to transfer the complete image from
+   my home WiFi over ssh, apply it, and reboot.
+
+Work that's needed includes at least:
+
+1. Improve the server bootstrap process. Getting the very first image on is
+   currently tedious and probably Vultr-specific (uses iPXE).
+2. The terminology used in Nerves feels completely foreign for backend use.
+   (i.e. deploying "firmware" to servers sounds more like updating the BIOS)
+3. Support provisioning of the server via environment variables or any other
+   typical mechanisms.
+4. Target Amazon EC2 and other providers/server technologies. I don't know why
+   this couldn't be done as well.
+5. Cleanup and documentation. If this turns out to be interesting, it's going
+   to need a good pass to make the whole approach accessible to newcomers and
+   obvious to experienced devs that they aren't losing functionality.
 
 ## Overview
 
@@ -123,7 +161,9 @@ you for the key. There's a shell script in the `nerves_firmware_ssh`
 project called `upload.sh`. Download it and run it as `./upload.sh <ip address>`
 
 You should see a progress as the upload occurs. At the end, it will reboot
-the server.
+the server. This takes about 20 seconds on my home WiFi and I've wondered if
+something is limiting the upload bandwidth to 1 MB/sec. It seems like it should
+be faster.
 
 ## Notes
 
